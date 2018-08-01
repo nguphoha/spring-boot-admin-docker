@@ -1,20 +1,11 @@
-#Clone project
-FROM alpine/git as clone 
-WORKDIR /opt
-RUN git clone https://github.com/nguphoha/spring-boot-admin-docker
+FROM maven:3.3.9-jdk-8-alpine
+MAINTAINER nguphoha
 
-#build project
-FROM maven:3.5-jdk-8-alpine as build
-WORKDIR /opt
-COPY --from=clone /opt/spring-boot-admin-docker /opt 
-RUN mvn install
+ENV TZ UTC
 
-#run Project
-FROM openjdk:8-jre-alpine
+RUN     mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+ADD     . /usr/src/app
+RUN     mvn package && cp target/*.jar /usr/src/app/spring-boot-admin.jar
 
-EXPOSE 8080
-
-WORKDIR /opt
-COPY target/SpringBoot-Admin-*.jar /opt/spring-boot-admin-docker.jar
-
-ENTRYPOINT ["java", "-jar", "spring-boot-admin-docker.jar"]
+CMD ["java", "-XX:MinHeapFreeRatio=10", "-XX:MaxHeapFreeRatio=10", "-Xms10m", "-jar", "spring-boot-admin.jar" ]
