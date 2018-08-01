@@ -5,8 +5,8 @@ RUN git clone https://github.com/nguphoha/spring-boot-admin-docker
 
 #build project
 FROM maven:3.5-jdk-8-alpine as build
-WORKDIR /app
-COPY --from=clone /app/spring-petclinic /app 
+WORKDIR /opt
+COPY --from=clone /opt/spring-boot-admin-docker /opt 
 RUN mvn install
 
 #run Project
